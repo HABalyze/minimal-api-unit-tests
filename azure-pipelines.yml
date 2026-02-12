@@ -1,0 +1,49 @@
+trigger : none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: 'Release'
+
+stages:
+  - stage: NET_Validate
+    jobs:
+      - job: Validation
+        continueOnError: false
+        steps:
+          # Build
+          - script: dotnet build --configuration $(buildConfiguration)
+            displayName: Build
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+          # Test (Corregido el typo de DataCollector y formato de líneas)
+          - script: >
+              dotnet test --configuration $(buildConfiguration)
+              --no-build
+              --no-restore
+              --logger trx
+              --collect:"XPlat Code Coverage"
+              -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+            displayName: Test
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+          # Format
+          - script: dotnet format --verify-no-changes --no-restore -v m
+            displayName: Format
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+          # Publish Test Results (Corregido succeededOrFailed)
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            displayName: Publish Test Results
+            inputs:
+              testRunner: VSTest
+              testResultsFiles: '**/*.trx'
+
+          # Publish Code Coverage (Corregido succeededOrFailed)
+          - task: PublishCodeCoverageResults@2
+            condition: succeededOrFailed()
+            displayName: Publish Code Coverage
+            inputs:
+              summaryFileLocation: '**/coverage.cobertura.xml'

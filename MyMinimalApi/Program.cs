@@ -10,6 +10,8 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
 
+// Metodo de Post
+
 app.MapPost("/people", (IPeopleService service, Person person) => 
     !MiniValidator.TryValidate(person, out var errors) 
         ? Results.ValidationProblem(errors) 

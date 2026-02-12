@@ -47,3 +47,4 @@ stages:
             displayName: Publish Code Coverage
             inputs:
               summaryFileLocation: '**/coverage.cobertura.xml'
+              

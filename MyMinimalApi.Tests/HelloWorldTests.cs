@@ -13,4 +13,14 @@ public class HelloWorldTests
         var response = await client.GetStringAsync("/");
         Assert.Equal("Hello World!", response);
     }
+
+    [Fact]
+    public async Task TestAzDoEndPoint()
+    {
+        await using var application = new WebApplicationFactory<Program>();
+        using var client = application.CreateClient();
+
+        var response = await client.GetStringAsync("/Hello");
+        Assert.Equal("Hello Azure Devops!", response);
+    }
 }

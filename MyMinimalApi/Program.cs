@@ -10,6 +10,8 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
 
+app.MapGet("/Hello", () => "Hello Azure DevOps!");
+
 // Metodo de Post
 
 app.MapPost("/people", (IPeopleService service, Person person) => 
